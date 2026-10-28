@@ -1,0 +1,122 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/Resources/Download",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/Resources/Download",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Login/{action}",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/Login/{action}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Teachers/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "DownstreamPathTemplate": "/api/Teachers/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/Health/{everything}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/Health/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Account/{everything}",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/api/Account/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Public/{everything}",
+      "UpstreamHttpMethod": [
+        "POST",
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/api/Public/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamHttpMethod": [
+        "POST",
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5101
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ]
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5100"
+  }
+}

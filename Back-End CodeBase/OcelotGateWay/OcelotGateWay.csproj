@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>adding-dimensions-ocelot-gateway</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Update="appsettings.Local.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <ProjectReference Include="..\JwtAuthenticationManager\JwtAuthenticationManager.csproj" />
+    <PackageReference Include="Ocelot" Version="25.0.2" />
+    <Content Update="ocelot.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,5896 @@
+[
+  {
+    "table": "m_role",
+    "script": "100_m_role.sql",
+    "columns": [
+      {
+        "name": "role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "role_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "SCHOOLNET_ADMIN / PROJECT_ADMIN / STATE_ADMIN / SCHOOL_ADMIN / TRAINER / TRAINEE"
+      },
+      {
+        "name": "role_name",
+        "type": "VARCHAR(60)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Display name e.g. 'Schoolnet Admin'"
+      },
+      {
+        "name": "role_rank",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "1 = highest authority ... 6 = lowest. A user may only create users whose role has a HIGHER number than their own"
+      },
+      {
+        "name": "role_category",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "MANAGEMENT | TRAINER | TRAINEE (business user type)"
+      },
+      {
+        "name": "data_scope",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "ALL = no filter (Super Admin) | GRANT = limited to user_access_scope grants | SELF = own records only"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(300)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_module",
+    "script": "101_m_module.sql",
+    "columns": [
+      {
+        "name": "module_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "module_code",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "e.g. PROJECTS, PLANS, BATCHES, TRAINEES, ATTENDANCE"
+      },
+      {
+        "name": "module_name",
+        "type": "VARCHAR(80)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "sort_order",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Menu order"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "role_permission",
+    "script": "102_role_permission.sql",
+    "columns": [
+      {
+        "name": "role_permission_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_role.role_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "module_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_module.module_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "can_view",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "can_create",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "can_edit",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "can_delete",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Logical delete only"
+      },
+      {
+        "name": "can_approve",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Approve trainees / common resources"
+      },
+      {
+        "name": "can_export",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Download reports / Excel"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_stakeholder",
+    "script": "103_m_stakeholder.sql",
+    "columns": [
+      {
+        "name": "stakeholder_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "stakeholder_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "stakeholder_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "stakeholder_type",
+        "type": "VARCHAR(15)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "OTHER'",
+        "remarks": "GOVT_AGENCY | NGO | CORPORATE | OTHER"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "role_creation_rule",
+    "script": "104_role_creation_rule.sql",
+    "columns": [
+      {
+        "name": "rule_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "creator_role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_role.role_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "creatable_role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_role.role_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "app_user",
+    "script": "105_app_user.sql",
+    "columns": [
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": "Auto-increment surrogate key"
+      },
+      {
+        "name": "login_id",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "User ID typed at login (A1..A6 in demo). Must NOT be a mobile / e-mail (keep PII out of plain columns); trainees use trainee_code"
+      },
+      {
+        "name": "full_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Not PII - names are stored and shown in plain text (only mobile and e-mail are PII)"
+      },
+      {
+        "name": "role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_role.role_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "email_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "email_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised email, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "email_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. r*****@gmail.com"
+      },
+      {
+        "name": "pii_key_version",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Version of the encryption key used for the *_enc columns (supports key rotation)"
+      },
+      {
+        "name": "mobile_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "mobile_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised mobile, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "mobile_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. 98******01"
+      },
+      {
+        "name": "password_hash",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "One-way hash (Argon2id preferred, else bcrypt) with per-user salt. NOT encrypted, so nobody - not even Super Admin - can read it; admins can only trigger a reset"
+      },
+      {
+        "name": "must_change_password",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Force change on first login"
+      },
+      {
+        "name": "failed_login_count",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Reset to 0 on success; lock after N failures"
+      },
+      {
+        "name": "locked_until",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Account lock expiry"
+      },
+      {
+        "name": "last_login_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Auto-set on successful login"
+      },
+      {
+        "name": "stakeholder_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_stakeholder.stakeholder_id",
+        "default": "",
+        "remarks": "Organisation the user belongs to. Inherited from the creator and cannot be changed; NULL for Schoolnet staff. A stakeholder user never sees another stakeholder's users or projects"
+      },
+      {
+        "name": "parent_user_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "The manager who created this user (builds the user hierarchy). Creator role_rank must be lower than this user's role_rank"
+      },
+      {
+        "name": "trainer_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainer.trainer_id",
+        "default": "",
+        "remarks": "Mandatory for Trainer"
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": "Mandatory for Trainee"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_state",
+    "script": "106_m_state.sql",
+    "columns": [
+      {
+        "name": "state_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "state_code",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "LGD / short code e.g. KA, MH"
+      },
+      {
+        "name": "state_name",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_district",
+    "script": "107_m_district.sql",
+    "columns": [
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "state_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_state.state_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "district_code",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "district_name",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_block",
+    "script": "108_m_block.sql",
+    "columns": [
+      {
+        "name": "block_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "block_code",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "block_name",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_cluster",
+    "script": "109_m_cluster.sql",
+    "columns": [
+      {
+        "name": "cluster_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "block_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_block.block_id",
+        "default": "",
+        "remarks": "NULL when the cluster sits directly under the district"
+      },
+      {
+        "name": "cluster_code",
+        "type": "VARCHAR(10)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "cluster_name",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "user_access_scope",
+    "script": "110_user_access_scope.sql",
+    "columns": [
+      {
+        "name": "scope_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": "NULL = all projects"
+      },
+      {
+        "name": "state_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_state.state_id",
+        "default": "",
+        "remarks": "Optional. NULL = skip (any state)"
+      },
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": "Optional. NULL = skip"
+      },
+      {
+        "name": "block_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_block.block_id",
+        "default": "",
+        "remarks": "Optional. NULL = skip"
+      },
+      {
+        "name": "cluster_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_cluster.cluster_id",
+        "default": "",
+        "remarks": "Optional. NULL = skip"
+      },
+      {
+        "name": "school_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_school.school_id",
+        "default": "",
+        "remarks": "Optional: one specific school (UDISE). Lets you grant with only project + school, skipping state / district / block / cluster"
+      },
+      {
+        "name": "valid_from",
+        "type": "DATE",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Optional start of grant"
+      },
+      {
+        "name": "valid_to",
+        "type": "DATE",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Optional expiry of grant"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_school",
+    "script": "111_m_school.sql",
+    "columns": [
+      {
+        "name": "school_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "udise_code",
+        "type": "VARCHAR(20)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "UDISE+ code (11 digits in production)"
+      },
+      {
+        "name": "school_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "state_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_state.state_id",
+        "default": "",
+        "remarks": "Filled automatically from the lowest value given (cluster, block or district); a trigger checks the values agree"
+      },
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": "Mandatory (filled automatically if only block / cluster is given)"
+      },
+      {
+        "name": "block_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_block.block_id",
+        "default": "",
+        "remarks": "NULL when the school has no block"
+      },
+      {
+        "name": "cluster_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_cluster.cluster_id",
+        "default": "",
+        "remarks": "NULL when the school has no cluster"
+      },
+      {
+        "name": "actual_location",
+        "type": "VARCHAR(300)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Must exist before a batch can be created (rule R.batch)"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "m_holiday",
+    "script": "112_m_holiday.sql",
+    "columns": [
+      {
+        "name": "holiday_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "holiday_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "holiday_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "scope",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NATIONAL | STATE | DISTRICT | PROJECT"
+      },
+      {
+        "name": "state_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_state.state_id",
+        "default": "",
+        "remarks": "Required when scope = STATE"
+      },
+      {
+        "name": "district_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": "Required when scope = DISTRICT"
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": "Required when scope = PROJECT"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "trainer",
+    "script": "113_trainer.sql",
+    "columns": [
+      {
+        "name": "trainer_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainer_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "e.g. TR-0001"
+      },
+      {
+        "name": "trainer_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Not PII - plain text"
+      },
+      {
+        "name": "category",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "EMPLOYEE | CONSULTANT"
+      },
+      {
+        "name": "mobile_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "mobile_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised mobile, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "mobile_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. 98******01"
+      },
+      {
+        "name": "email_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "email_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised email, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "email_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. r*****@gmail.com"
+      },
+      {
+        "name": "pii_key_version",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Version of the encryption key used for the *_enc columns (supports key rotation)"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "trainer_availability",
+    "script": "114_trainer_availability.sql",
+    "columns": [
+      {
+        "name": "availability_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainer_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainer.trainer_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "start_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "end_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "project",
+    "script": "115_project.sql",
+    "columns": [
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Unique; may come from Odoo (open question Q2)"
+      },
+      {
+        "name": "project_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "start_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "end_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Must be > start_date; batches must lie within project period"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "odoo_ref",
+        "type": "VARCHAR(50)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Reference id from Odoo, if integration is confirmed"
+      },
+      {
+        "name": "stakeholder_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_stakeholder.stakeholder_id",
+        "default": "",
+        "remarks": "Owning stakeholder / organisation of this project"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "system_setting",
+    "script": "116_system_setting.sql",
+    "columns": [
+      {
+        "name": "setting_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK, UQ",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": "NULL = global default"
+      },
+      {
+        "name": "attendance_threshold_pct",
+        "type": "NUMERIC(5,2)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Min attendance % for completion. NULL = not yet decided by business"
+      },
+      {
+        "name": "pass_score",
+        "type": "NUMERIC(5,2)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Min assessment score"
+      },
+      {
+        "name": "assessment_required",
+        "type": "BOOLEAN",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NULL = not configured"
+      },
+      {
+        "name": "feedback_required",
+        "type": "BOOLEAN",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NULL = not configured"
+      },
+      {
+        "name": "registration_window",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "DAY1'",
+        "remarks": "DAY1 = batch start date only | BATCH_DATES = any batch day"
+      },
+      {
+        "name": "trainer_upload_allowed",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Can trainers upload resources"
+      },
+      {
+        "name": "propagate_resources",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "New resource links apply to existing batches"
+      },
+      {
+        "name": "restrict_venue_to_scope",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "FALSE = a trainer may pick ANY school as batch venue; TRUE = venue must lie inside the trainer's granted area"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "training_plan",
+    "script": "117_training_plan.sql",
+    "columns": [
+      {
+        "name": "plan_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "plan_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Stable unique code e.g. TP-DEMO-01"
+      },
+      {
+        "name": "plan_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "training_type",
+        "type": "VARCHAR(15)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "INDUCTION | REFRESHER_1 | REFRESHER_2 | OTHER"
+      },
+      {
+        "name": "total_days",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Minimum 4 (business rule)"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "DRAFT'",
+        "remarks": "DRAFT | ACTIVE | INACTIVE. Only ACTIVE plans can be used for new batches"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "training_plan_day",
+    "script": "118_training_plan_day.sql",
+    "columns": [
+      {
+        "name": "plan_day_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "plan_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_plan.plan_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "day_no",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "1 .. plan.total_days (checked by trigger)"
+      },
+      {
+        "name": "day_title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "e.g. 'Day 1 - Orientation and baseline'"
+      },
+      {
+        "name": "objective",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "What the day should achieve"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "training_plan_activity",
+    "script": "119_training_plan_activity.sql",
+    "columns": [
+      {
+        "name": "activity_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "plan_day_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_plan_day.plan_day_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "seq_no",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Order within the day (1, 2, 3 ...)"
+      },
+      {
+        "name": "activity_type",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "SESSION | PRACTICAL | DISCUSSION | ASSESSMENT | FEEDBACK | BREAK | OTHER"
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "start_time",
+        "type": "TIME",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Planned start time (optional)"
+      },
+      {
+        "name": "duration_minutes",
+        "type": "SMALLINT",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Planned length in minutes (optional)"
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": "Material or form used in this activity (optional)"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "learning_resource",
+    "script": "120_learning_resource.sql",
+    "columns": [
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Business code"
+      },
+      {
+        "name": "resource_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_type",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PPT | PPTX | PDF | MP4 | WEBM | FORM"
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": "NULL when is_common = TRUE"
+      },
+      {
+        "name": "is_common",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Reusable across projects"
+      },
+      {
+        "name": "common_requested",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Trainer asked to publish as common (pending admin approval)"
+      },
+      {
+        "name": "file_name",
+        "type": "VARCHAR(255)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Original file name (NULL for forms)"
+      },
+      {
+        "name": "file_size_bytes",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "mime_type",
+        "type": "VARCHAR(100)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "storage_path",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Path / object-store key. Do NOT store file bytes in DB"
+      },
+      {
+        "name": "form_type",
+        "type": "VARCHAR(12)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "ASSESSMENT | FEEDBACK (only when resource_type = FORM)"
+      },
+      {
+        "name": "form_purpose",
+        "type": "VARCHAR(30)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PRE_ASSESSMENT | DAILY_FEEDBACK | POST_ASSESSMENT"
+      },
+      {
+        "name": "duration_seconds",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Length of video / audio, used for playback progress %"
+      },
+      {
+        "name": "access_mode",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "PLAN_ONLY'",
+        "remarks": "PLAN_ONLY = only trainees of batches whose plan links it | REPOSITORY = any trainee of the project (or all, if common) | RESTRICTED = only audience rows"
+      },
+      {
+        "name": "uploaded_by",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "Uploader"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "form_question",
+    "script": "121_form_question.sql",
+    "columns": [
+      {
+        "name": "question_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": "Must be a resource of type FORM"
+      },
+      {
+        "name": "question_text",
+        "type": "VARCHAR(1000)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "expected_answer",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Mandatory for ASSESSMENT, NULL for FEEDBACK"
+      },
+      {
+        "name": "options_json",
+        "type": "JSONB",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Choices for MCQ (future)"
+      },
+      {
+        "name": "marks",
+        "type": "NUMERIC(5,2)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "100",
+        "remarks": "Marks for correct answer"
+      },
+      {
+        "name": "sort_order",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "plan_resource_link",
+    "script": "122_plan_resource_link.sql",
+    "columns": [
+      {
+        "name": "link_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "plan_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_plan.plan_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": "NULL for common resources"
+      },
+      {
+        "name": "apply_existing",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "TRUE = also visible to already-created batches"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "plan_resource_day",
+    "script": "123_plan_resource_day.sql",
+    "columns": [
+      {
+        "name": "link_day_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "link_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "plan_resource_link.link_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "day_no",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "1..plan.total_days; no repeats"
+      }
+    ]
+  },
+  {
+    "table": "resource_access_log",
+    "script": "124_resource_access_log.sql",
+    "columns": [
+      {
+        "name": "access_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "accessed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "resource_audience",
+    "script": "125_resource_audience.sql",
+    "columns": [
+      {
+        "name": "audience_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": "Everyone enrolled in this batch"
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": "One specific trainee"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "resource_progress",
+    "script": "126_resource_progress.sql",
+    "columns": [
+      {
+        "name": "progress_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "first_viewed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "last_viewed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Updated by application on each view"
+      },
+      {
+        "name": "last_position_seconds",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Resume point for video; page no. for PDF / PPT"
+      },
+      {
+        "name": "percent_viewed",
+        "type": "NUMERIC(5,2)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "completed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when percent_viewed reaches 100"
+      }
+    ]
+  },
+  {
+    "table": "training_batch",
+    "script": "127_training_batch.sql",
+    "columns": [
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Batch_UniqueID (global unique - open question Q8)"
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "plan_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_plan.plan_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "school_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_school.school_id",
+        "default": "",
+        "remarks": "Venue: any school from the generic school master (not tied to a project)"
+      },
+      {
+        "name": "reference_location",
+        "type": "VARCHAR(300)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Free-text reference supplied in upload"
+      },
+      {
+        "name": "actual_location",
+        "type": "VARCHAR(300)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Copied from school.actual_location at save"
+      },
+      {
+        "name": "start_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "end_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "#NAME?"
+      },
+      {
+        "name": "capacity",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Batch_Maxsize > 0; cannot go below current enrolment"
+      },
+      {
+        "name": "trainer_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainer.trainer_id",
+        "default": "",
+        "remarks": "Trainer conducting the batch (normally the trainer who created it)"
+      },
+      {
+        "name": "open_registration",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Master switch: the batch QR / link accepts registrations only while TRUE"
+      },
+      {
+        "name": "is_closed",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Final closure - no more edits / registrations"
+      },
+      {
+        "name": "closed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when is_closed becomes TRUE"
+      },
+      {
+        "name": "plan_code_snapshot",
+        "type": "VARCHAR(30)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Plan code frozen at batch creation"
+      },
+      {
+        "name": "plan_snapshot_json",
+        "type": "JSONB",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Plan header + linked resources frozen at batch creation (history safe). The day-wise schedule is copied into batch_day / batch_day_activity"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "batch_day",
+    "script": "128_batch_day.sql",
+    "columns": [
+      {
+        "name": "batch_day_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "day_no",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "1 .. plan.total_days (e.g. 1 .. 10)"
+      },
+      {
+        "name": "day_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "batch.start_date + day_no - 1; shifted automatically if the batch start date changes"
+      },
+      {
+        "name": "day_title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Copied from the plan day ('Day n' if the plan day has no title)"
+      },
+      {
+        "name": "objective",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "table": "batch_day_activity",
+    "script": "129_batch_day_activity.sql",
+    "columns": [
+      {
+        "name": "batch_activity_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_day_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "batch_day.batch_day_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "seq_no",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Order within the day"
+      },
+      {
+        "name": "activity_type",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "SESSION | PRACTICAL | DISCUSSION | ASSESSMENT | FEEDBACK | BREAK | OTHER"
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "start_time",
+        "type": "TIME",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "duration_minutes",
+        "type": "SMALLINT",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resource_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "learning_resource.resource_id",
+        "default": "",
+        "remarks": "Material or form used in this activity"
+      }
+    ]
+  },
+  {
+    "table": "trainee",
+    "script": "130_trainee.sql",
+    "columns": [
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Trainee ID shown to user / printed on certificate"
+      },
+      {
+        "name": "full_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Not PII - names are stored and shown in plain text (only mobile and e-mail are PII)"
+      },
+      {
+        "name": "mobile_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "mobile_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised mobile, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "mobile_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. 98******01"
+      },
+      {
+        "name": "email_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "email_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised email, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "email_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. r*****@gmail.com"
+      },
+      {
+        "name": "pii_key_version",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Version of the encryption key used for the *_enc columns (supports key rotation)"
+      },
+      {
+        "name": "is_erased",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "TRUE after a DPDPA erasure request: mobile / e-mail are nulled and the name is replaced by 'ERASED'; training records are kept"
+      },
+      {
+        "name": "erased_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Auto-set when erased"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "batch_enrollment",
+    "script": "131_batch_enrollment.sql",
+    "columns": [
+      {
+        "name": "enrollment_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "registration_mode",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "SELF (QR scan / open link + OTP) | EXCEL (trainer upload)"
+      },
+      {
+        "name": "registered_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time of registration"
+      },
+      {
+        "name": "registration_link_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "batch_registration_link.link_id",
+        "default": "",
+        "remarks": "QR / link used to enrol; NULL for Excel uploads"
+      },
+      {
+        "name": "registered_ip",
+        "type": "VARCHAR(45)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "IP address at self-registration (abuse tracing)"
+      },
+      {
+        "name": "trainee_school_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_school.school_id",
+        "default": "",
+        "remarks": "School the trainee selected at registration (search by name / UDISE). Either this or the trainee_state / district / block / cluster columns should be filled"
+      },
+      {
+        "name": "trainee_state_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_state.state_id",
+        "default": "",
+        "remarks": "Used when the trainee picks a location instead of a school"
+      },
+      {
+        "name": "trainee_district_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_district.district_id",
+        "default": "",
+        "remarks": "Location picked at registration (District)"
+      },
+      {
+        "name": "trainee_block_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_block.block_id",
+        "default": "",
+        "remarks": "Optional (Block)"
+      },
+      {
+        "name": "trainee_cluster_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_cluster.cluster_id",
+        "default": "",
+        "remarks": "Optional (Cluster)"
+      },
+      {
+        "name": "trainee_school_other",
+        "type": "VARCHAR(200)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Free text when the school is not in the master"
+      },
+      {
+        "name": "approval_status",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "PENDING'",
+        "remarks": "PENDING | APPROVED | REJECTED"
+      },
+      {
+        "name": "approved_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "Trainer / admin who approved"
+      },
+      {
+        "name": "approved_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Auto-set on approval"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "batch_registration_link",
+    "script": "132_batch_registration_link.sql",
+    "columns": [
+      {
+        "name": "link_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "token",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Random, unguessable value (min 128-bit) placed in the QR URL. Never sequential"
+      },
+      {
+        "name": "valid_from",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NULL = no start restriction (system_setting.registration_window still applies)"
+      },
+      {
+        "name": "valid_until",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NULL = until batch closes. Trainer may set an expiry"
+      },
+      {
+        "name": "max_registrations",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Optional cap for this QR; NULL = batch capacity only"
+      },
+      {
+        "name": "registration_count",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Incremented on every successful enrolment through this QR"
+      },
+      {
+        "name": "scan_count",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Times the QR page was opened (analytics only)"
+      },
+      {
+        "name": "is_revoked",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "Trainer can disable a QR (e.g. shared by mistake) and issue a new one"
+      },
+      {
+        "name": "revoked_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when is_revoked becomes TRUE"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "registration_otp",
+    "script": "133_registration_otp.sql",
+    "columns": [
+      {
+        "name": "otp_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "mobile_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "mobile_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised mobile, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "mobile_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. 98******01"
+      },
+      {
+        "name": "email_enc",
+        "type": "BYTEA",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PII - encrypted at rest (AES-256-GCM). Decrypted by the application only when the user's view mode for this field is FULL"
+      },
+      {
+        "name": "email_hash",
+        "type": "CHAR(64)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Blind index = HMAC-SHA256(normalised email, separate key). For duplicate check / exact search only; not reversible"
+      },
+      {
+        "name": "email_mask",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Pre-computed masked value e.g. r*****@gmail.com"
+      },
+      {
+        "name": "pii_key_version",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Version of the encryption key used for the *_enc columns (supports key rotation)"
+      },
+      {
+        "name": "otp_hash",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "One-way hash only (never the OTP itself)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "expires_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "created_at + 5 minutes"
+      },
+      {
+        "name": "attempt_count",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "verified_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when OTP verified"
+      }
+    ]
+  },
+  {
+    "table": "bulk_upload_log",
+    "script": "134_bulk_upload_log.sql",
+    "columns": [
+      {
+        "name": "upload_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "upload_type",
+        "type": "VARCHAR(20)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "BATCH | TRAINEE | ATTENDANCE | TRAINER | AVAILABILITY | HOLIDAY | RESOURCE | CERT_RECORD | CERT_TEMPLATE"
+      },
+      {
+        "name": "file_name",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "batch_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "training_batch.batch_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "total_rows",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "success_rows",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "failed_rows",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "VALIDATED'",
+        "remarks": "VALIDATED | COMMITTED | REJECTED  (all-or-nothing, Q7)"
+      },
+      {
+        "name": "error_report_path",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "uploaded_by",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "uploaded_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "attendance",
+    "script": "135_attendance.sql",
+    "columns": [
+      {
+        "name": "attendance_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "enrollment_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "batch_enrollment.enrollment_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "attendance_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Within batch dates; not a future date"
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PRESENT | ABSENT"
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "MANUAL'",
+        "remarks": "MANUAL | EXCEL"
+      },
+      {
+        "name": "marked_by",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "marked_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger on correction"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "table": "form_submission",
+    "script": "136_form_submission.sql",
+    "columns": [
+      {
+        "name": "submission_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "enrollment_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "batch_enrollment.enrollment_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "question_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "form_question.question_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "submitted_on",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "CURRENT_DATE",
+        "remarks": "Auto date"
+      },
+      {
+        "name": "submitted_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "answer",
+        "type": "VARCHAR(1000)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "score",
+        "type": "NUMERIC(5,2)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NULL for feedback forms"
+      }
+    ]
+  },
+  {
+    "table": "completion_review",
+    "script": "137_completion_review.sql",
+    "columns": [
+      {
+        "name": "completion_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "enrollment_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK, UQ",
+        "reference": "batch_enrollment.enrollment_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "attendance_pct",
+        "type": "NUMERIC(5,2)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "assessment_score",
+        "type": "NUMERIC(5,2)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_eligible",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": ""
+      },
+      {
+        "name": "remarks",
+        "type": "VARCHAR(300)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Reason when not eligible"
+      },
+      {
+        "name": "reviewed_by",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "reviewed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "certificate_template",
+    "script": "138_certificate_template.sql",
+    "columns": [
+      {
+        "name": "template_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "template_code",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "program_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "signatory_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "colour_scheme",
+        "type": "VARCHAR(7)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "#17365D'",
+        "remarks": "Hex colour"
+      },
+      {
+        "name": "layout",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "LANDSCAPE'",
+        "remarks": "LANDSCAPE | PORTRAIT"
+      },
+      {
+        "name": "org_logo_path",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PNG / JPEG / WebP in file store"
+      },
+      {
+        "name": "project_logo_path",
+        "type": "VARCHAR(500)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "certificate_record",
+    "script": "139_certificate_record.sql",
+    "columns": [
+      {
+        "name": "certificate_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "certificate_number",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "Printed number"
+      },
+      {
+        "name": "enrollment_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK, UQ",
+        "reference": "batch_enrollment.enrollment_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "template_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "certificate_template.template_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_name",
+        "type": "VARCHAR(150)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Must equal the trainee name at issue time (frozen snapshot, plain text)"
+      },
+      {
+        "name": "training_name",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Must match plan name"
+      },
+      {
+        "name": "duration_days",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Must match plan.total_days"
+      },
+      {
+        "name": "completion_date",
+        "type": "DATE",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ">= batch end date, not in future"
+      },
+      {
+        "name": "is_provisional",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "TRUE until business signs off criteria"
+      },
+      {
+        "name": "template_snapshot_json",
+        "type": "JSONB",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Template frozen at issue time"
+      },
+      {
+        "name": "issued_by",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "issued_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "audit_log",
+    "script": "140_audit_log.sql",
+    "columns": [
+      {
+        "name": "audit_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "occurred_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "actor_user_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "NULL = system job"
+      },
+      {
+        "name": "action",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "entity_type",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Table name"
+      },
+      {
+        "name": "entity_id",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PK value of the affected row"
+      },
+      {
+        "name": "project_id",
+        "type": "INTEGER",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "project.project_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "before_json",
+        "type": "JSONB",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Row before change (PII masked)"
+      },
+      {
+        "name": "after_json",
+        "type": "JSONB",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Row after change (PII masked)"
+      },
+      {
+        "name": "ip_address",
+        "type": "VARCHAR(45)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      }
+    ]
+  },
+  {
+    "table": "user_activity_log",
+    "script": "141_user_activity_log.sql",
+    "columns": [
+      {
+        "name": "activity_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "NULL when login_id unknown"
+      },
+      {
+        "name": "login_id_tried",
+        "type": "VARCHAR(30)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "activity_type",
+        "type": "VARCHAR(20)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "LOGIN | LOGOUT | LOGIN_FAILED | PASSWORD_CHANGE"
+      },
+      {
+        "name": "result",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "SUCCESS | FAILURE"
+      },
+      {
+        "name": "ip_address",
+        "type": "VARCHAR(45)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "occurred_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "profile_change_log",
+    "script": "142_profile_change_log.sql",
+    "columns": [
+      {
+        "name": "change_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "field_name",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "name | mobile | email"
+      },
+      {
+        "name": "old_value_masked",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "new_value_masked",
+        "type": "VARCHAR(150)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "changed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "m_pii_field",
+    "script": "143_m_pii_field.sql",
+    "columns": [
+      {
+        "name": "pii_field_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "field_code",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "UQ",
+        "reference": "",
+        "default": "",
+        "remarks": "e.g. TRAINEE.MOBILE"
+      },
+      {
+        "name": "table_name",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "column_base",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Base column name; physical columns are <base>_enc / _hash / _mask"
+      },
+      {
+        "name": "mask_rule",
+        "type": "VARCHAR(15)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "MOBILE_FIRST2_LAST2 | EMAIL | FULL_HIDE (see fn_mask)"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(200)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "role_pii_permission",
+    "script": "144_role_pii_permission.sql",
+    "columns": [
+      {
+        "name": "role_pii_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "role_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_role.role_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "pii_field_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_pii_field.pii_field_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "view_mode",
+        "type": "VARCHAR(6)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "MASKED'",
+        "remarks": "NONE | MASKED | FULL. Row-level scope (user_access_scope) still applies first; a trainee always sees own data in FULL"
+      },
+      {
+        "name": "can_export_full",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "0",
+        "remarks": "May include the clear value in a download / report"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "user_pii_override",
+    "script": "145_user_pii_override.sql",
+    "columns": [
+      {
+        "name": "override_id",
+        "type": "INTEGER",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "pii_field_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_pii_field.pii_field_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "view_mode",
+        "type": "VARCHAR(6)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "NONE | MASKED | FULL"
+      },
+      {
+        "name": "reason",
+        "type": "VARCHAR(300)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Mandatory business justification (DPDPA purpose limitation)"
+      },
+      {
+        "name": "valid_from",
+        "type": "DATE",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "valid_to",
+        "type": "DATE",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Recommended: time-box FULL access"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "1",
+        "remarks": "Soft-delete flag; FALSE = deactivated (never hard-delete)"
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Row creation date/time"
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who created the row (NULL for system / self-registration)"
+      },
+      {
+        "name": "updated_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set by trigger trg_set_updated_at on every UPDATE"
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": "User who last modified the row"
+      }
+    ]
+  },
+  {
+    "table": "pii_access_log",
+    "script": "146_pii_access_log.sql",
+    "columns": [
+      {
+        "name": "pii_access_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "pii_field_id",
+        "type": "SMALLINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "m_pii_field.pii_field_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "entity_id",
+        "type": "VARCHAR(50)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "PK of the person / row viewed"
+      },
+      {
+        "name": "action",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "VIEW_FULL | EXPORT_FULL | DENIED"
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(200)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Purpose entered when unmasking, if required"
+      },
+      {
+        "name": "ip_address",
+        "type": "VARCHAR(45)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "occurred_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      }
+    ]
+  },
+  {
+    "table": "consent_record",
+    "script": "147_consent_record.sql",
+    "columns": [
+      {
+        "name": "consent_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(30)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "TRAINING_ENROLMENT | CERTIFICATE | COMMUNICATION"
+      },
+      {
+        "name": "notice_version",
+        "type": "VARCHAR(20)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Version of the privacy notice shown"
+      },
+      {
+        "name": "channel",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "QR | EXCEL | ADMIN"
+      },
+      {
+        "name": "given_by",
+        "type": "VARCHAR(10)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "SELF'",
+        "remarks": "SELF | GUARDIAN (parent / guardian for a child under 18)"
+      },
+      {
+        "name": "guardian_verified_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when verifiable guardian consent is obtained"
+      },
+      {
+        "name": "consented_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "consent_ip",
+        "type": "VARCHAR(45)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "withdrawn_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Set when the trainee withdraws consent"
+      }
+    ]
+  },
+  {
+    "table": "data_subject_request",
+    "script": "148_data_subject_request.sql",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": true,
+        "key": "PK",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "trainee_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "identity": false,
+        "key": "FK",
+        "reference": "trainee.trainee_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "request_type",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "ACCESS | CORRECTION | ERASURE | GRIEVANCE | NOMINATION"
+      },
+      {
+        "name": "details",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(12)",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "OPEN'",
+        "remarks": "OPEN | IN_PROGRESS | CLOSED | REJECTED"
+      },
+      {
+        "name": "received_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": false,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "now()",
+        "remarks": "Auto date/time"
+      },
+      {
+        "name": "due_at",
+        "type": "DATE",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": "Response deadline (SLA)"
+      },
+      {
+        "name": "handled_by",
+        "type": "BIGINT",
+        "nullable": true,
+        "identity": false,
+        "key": "FK",
+        "reference": "app_user.user_id",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "closed_at",
+        "type": "TIMESTAMPTZ",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      },
+      {
+        "name": "resolution",
+        "type": "VARCHAR(1000)",
+        "nullable": true,
+        "identity": false,
+        "key": "",
+        "reference": "",
+        "default": "",
+        "remarks": ""
+      }
+    ]
+  }
+]

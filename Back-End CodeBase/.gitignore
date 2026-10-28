@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+**/Logs/
+.env
+**/appsettings.Local.json
+TestResults/
+.local/
+**/node_modules/
+**/__pycache__/

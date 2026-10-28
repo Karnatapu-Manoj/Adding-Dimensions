@@ -1,0 +1,165 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{8A367DDA-5161-A942-4F09-60E4726C9306}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeachersAPI", "Microservices\TeachersAPI\TeachersAPI.csproj", "{4BE28592-DE81-49A6-8B34-70A51E34F5F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuthenticationManager", "JwtAuthenticationManager\JwtAuthenticationManager.csproj", "{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotGateWay", "OcelotGateWay\OcelotGateWay.csproj", "{C7F44757-3202-456A-B676-E305E414732E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB Scripts", "DB Scripts", "{D06FA303-2E69-4B2A-979C-4DE4825903D1}"
+	ProjectSection(SolutionItems) = preProject
+		DB Scripts\DeployDatabase.ps1 = DB Scripts\DeployDatabase.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Table Creations", "Table Creations", "{5B7B4B22-EAFE-4DAC-8904-A643AF848676}"
+	ProjectSection(SolutionItems) = preProject
+		DB Scripts\Table Creations\001_Teachers.sql = DB Scripts\Table Creations\001_Teachers.sql
+		DB Scripts\Table Creations\002_TeacherAuthTokens.sql = DB Scripts\Table Creations\002_TeacherAuthTokens.sql
+		DB Scripts\Table Creations\100_m_role.sql = DB Scripts\Table Creations\100_m_role.sql
+		DB Scripts\Table Creations\101_m_module.sql = DB Scripts\Table Creations\101_m_module.sql
+		DB Scripts\Table Creations\102_role_permission.sql = DB Scripts\Table Creations\102_role_permission.sql
+		DB Scripts\Table Creations\103_m_stakeholder.sql = DB Scripts\Table Creations\103_m_stakeholder.sql
+		DB Scripts\Table Creations\104_role_creation_rule.sql = DB Scripts\Table Creations\104_role_creation_rule.sql
+		DB Scripts\Table Creations\105_app_user.sql = DB Scripts\Table Creations\105_app_user.sql
+		DB Scripts\Table Creations\106_m_state.sql = DB Scripts\Table Creations\106_m_state.sql
+		DB Scripts\Table Creations\107_m_district.sql = DB Scripts\Table Creations\107_m_district.sql
+		DB Scripts\Table Creations\108_m_block.sql = DB Scripts\Table Creations\108_m_block.sql
+		DB Scripts\Table Creations\109_m_cluster.sql = DB Scripts\Table Creations\109_m_cluster.sql
+		DB Scripts\Table Creations\110_user_access_scope.sql = DB Scripts\Table Creations\110_user_access_scope.sql
+		DB Scripts\Table Creations\111_m_school.sql = DB Scripts\Table Creations\111_m_school.sql
+		DB Scripts\Table Creations\112_m_holiday.sql = DB Scripts\Table Creations\112_m_holiday.sql
+		DB Scripts\Table Creations\113_trainer.sql = DB Scripts\Table Creations\113_trainer.sql
+		DB Scripts\Table Creations\114_trainer_availability.sql = DB Scripts\Table Creations\114_trainer_availability.sql
+		DB Scripts\Table Creations\115_project.sql = DB Scripts\Table Creations\115_project.sql
+		DB Scripts\Table Creations\116_system_setting.sql = DB Scripts\Table Creations\116_system_setting.sql
+		DB Scripts\Table Creations\117_training_plan.sql = DB Scripts\Table Creations\117_training_plan.sql
+		DB Scripts\Table Creations\118_training_plan_day.sql = DB Scripts\Table Creations\118_training_plan_day.sql
+		DB Scripts\Table Creations\119_training_plan_activity.sql = DB Scripts\Table Creations\119_training_plan_activity.sql
+		DB Scripts\Table Creations\120_learning_resource.sql = DB Scripts\Table Creations\120_learning_resource.sql
+		DB Scripts\Table Creations\121_form_question.sql = DB Scripts\Table Creations\121_form_question.sql
+		DB Scripts\Table Creations\122_plan_resource_link.sql = DB Scripts\Table Creations\122_plan_resource_link.sql
+		DB Scripts\Table Creations\123_plan_resource_day.sql = DB Scripts\Table Creations\123_plan_resource_day.sql
+		DB Scripts\Table Creations\124_resource_access_log.sql = DB Scripts\Table Creations\124_resource_access_log.sql
+		DB Scripts\Table Creations\125_resource_audience.sql = DB Scripts\Table Creations\125_resource_audience.sql
+		DB Scripts\Table Creations\126_resource_progress.sql = DB Scripts\Table Creations\126_resource_progress.sql
+		DB Scripts\Table Creations\127_training_batch.sql = DB Scripts\Table Creations\127_training_batch.sql
+		DB Scripts\Table Creations\128_batch_day.sql = DB Scripts\Table Creations\128_batch_day.sql
+		DB Scripts\Table Creations\129_batch_day_activity.sql = DB Scripts\Table Creations\129_batch_day_activity.sql
+		DB Scripts\Table Creations\130_trainee.sql = DB Scripts\Table Creations\130_trainee.sql
+		DB Scripts\Table Creations\131_batch_enrollment.sql = DB Scripts\Table Creations\131_batch_enrollment.sql
+		DB Scripts\Table Creations\132_batch_registration_link.sql = DB Scripts\Table Creations\132_batch_registration_link.sql
+		DB Scripts\Table Creations\133_registration_otp.sql = DB Scripts\Table Creations\133_registration_otp.sql
+		DB Scripts\Table Creations\134_bulk_upload_log.sql = DB Scripts\Table Creations\134_bulk_upload_log.sql
+		DB Scripts\Table Creations\135_attendance.sql = DB Scripts\Table Creations\135_attendance.sql
+		DB Scripts\Table Creations\136_form_submission.sql = DB Scripts\Table Creations\136_form_submission.sql
+		DB Scripts\Table Creations\137_completion_review.sql = DB Scripts\Table Creations\137_completion_review.sql
+		DB Scripts\Table Creations\138_certificate_template.sql = DB Scripts\Table Creations\138_certificate_template.sql
+		DB Scripts\Table Creations\139_certificate_record.sql = DB Scripts\Table Creations\139_certificate_record.sql
+		DB Scripts\Table Creations\140_audit_log.sql = DB Scripts\Table Creations\140_audit_log.sql
+		DB Scripts\Table Creations\141_user_activity_log.sql = DB Scripts\Table Creations\141_user_activity_log.sql
+		DB Scripts\Table Creations\142_profile_change_log.sql = DB Scripts\Table Creations\142_profile_change_log.sql
+		DB Scripts\Table Creations\143_m_pii_field.sql = DB Scripts\Table Creations\143_m_pii_field.sql
+		DB Scripts\Table Creations\144_role_pii_permission.sql = DB Scripts\Table Creations\144_role_pii_permission.sql
+		DB Scripts\Table Creations\145_user_pii_override.sql = DB Scripts\Table Creations\145_user_pii_override.sql
+		DB Scripts\Table Creations\146_pii_access_log.sql = DB Scripts\Table Creations\146_pii_access_log.sql
+		DB Scripts\Table Creations\147_consent_record.sql = DB Scripts\Table Creations\147_consent_record.sql
+		DB Scripts\Table Creations\148_data_subject_request.sql = DB Scripts\Table Creations\148_data_subject_request.sql
+		DB Scripts\Table Creations\199_WorkbookForeignKeys.sql = DB Scripts\Table Creations\199_WorkbookForeignKeys.sql
+		DB Scripts\Table Creations\200_WorkbookUpdatedAtTriggers.sql = DB Scripts\Table Creations\200_WorkbookUpdatedAtTriggers.sql
+		DB Scripts\Table Creations\210_PortalIntegration.sql = DB Scripts\Table Creations\210_PortalIntegration.sql
+		DB Scripts\Table Creations\220_PortalRecovery.sql = DB Scripts\Table Creations\220_PortalRecovery.sql
+		DB Scripts\Table Creations\225_AssessmentAndCertificateRules.sql = DB Scripts\Table Creations\225_AssessmentAndCertificateRules.sql
+		DB Scripts\Table Creations\226_PortalOtp.sql = DB Scripts\Table Creations\226_PortalOtp.sql
+		DB Scripts\Table Creations\227_PortalIdentityLinks.sql = DB Scripts\Table Creations\227_PortalIdentityLinks.sql
+		DB Scripts\Table Creations\230_WorkbookViews.sql = DB Scripts\Table Creations\230_WorkbookViews.sql
+
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stored Procedures", "Stored Procedures", "{DC8450ED-641D-4B8F-9E16-85A22D71D4C8}"
+	ProjectSection(SolutionItems) = preProject
+		DB Scripts\Stored Procedures\001_USP_GetTeachersList.sql = DB Scripts\Stored Procedures\001_USP_GetTeachersList.sql
+		DB Scripts\Stored Procedures\002_USP_GetTeacherById.sql = DB Scripts\Stored Procedures\002_USP_GetTeacherById.sql
+		DB Scripts\Stored Procedures\003_USP_GetLoginUser.sql = DB Scripts\Stored Procedures\003_USP_GetLoginUser.sql
+		DB Scripts\Stored Procedures\004_USP_SaveTeacher.sql = DB Scripts\Stored Procedures\004_USP_SaveTeacher.sql
+		DB Scripts\Stored Procedures\005_USP_UpdateTeacher.sql = DB Scripts\Stored Procedures\005_USP_UpdateTeacher.sql
+		DB Scripts\Stored Procedures\006_USP_DeleteTeacher.sql = DB Scripts\Stored Procedures\006_USP_DeleteTeacher.sql
+		DB Scripts\Stored Procedures\007_USP_SaveAuthToken.sql = DB Scripts\Stored Procedures\007_USP_SaveAuthToken.sql
+		DB Scripts\Stored Procedures\008_USP_GetUserAuthToken.sql = DB Scripts\Stored Procedures\008_USP_GetUserAuthToken.sql
+		DB Scripts\Stored Procedures\009_USP_RevokeAuthToken.sql = DB Scripts\Stored Procedures\009_USP_RevokeAuthToken.sql
+		DB Scripts\Stored Procedures\010_USP_CheckDatabaseHealth.sql = DB Scripts\Stored Procedures\010_USP_CheckDatabaseHealth.sql
+		DB Scripts\Stored Procedures\100_PortalSecurity.sql = DB Scripts\Stored Procedures\100_PortalSecurity.sql
+		DB Scripts\Stored Procedures\105_PortalCollections.sql = DB Scripts\Stored Procedures\105_PortalCollections.sql
+		DB Scripts\Stored Procedures\110_PortalWorkspace.sql = DB Scripts\Stored Procedures\110_PortalWorkspace.sql
+		DB Scripts\Stored Procedures\115_PortalSyncChildren.sql = DB Scripts\Stored Procedures\115_PortalSyncChildren.sql
+		DB Scripts\Stored Procedures\120_PortalBootstrap.sql = DB Scripts\Stored Procedures\120_PortalBootstrap.sql
+		DB Scripts\Stored Procedures\124_PortalAudienceMetrics.sql = DB Scripts\Stored Procedures\124_PortalAudienceMetrics.sql
+		DB Scripts\Stored Procedures\125_PortalDashboard.sql = DB Scripts\Stored Procedures\125_PortalDashboard.sql
+		DB Scripts\Stored Procedures\130_PortalPublic.sql = DB Scripts\Stored Procedures\130_PortalPublic.sql
+		DB Scripts\Stored Procedures\135_PortalResources.sql = DB Scripts\Stored Procedures\135_PortalResources.sql
+		DB Scripts\Stored Procedures\140_PortalAssessmentStart.sql = DB Scripts\Stored Procedures\140_PortalAssessmentStart.sql
+		DB Scripts\Stored Procedures\145_PortalOtp.sql = DB Scripts\Stored Procedures\145_PortalOtp.sql
+		DB Scripts\Stored Procedures\150_PortalRecoveryAndReset.sql = DB Scripts\Stored Procedures\150_PortalRecoveryAndReset.sql
+
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|x64.Build.0 = Release|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1}.Release|x86.Build.0 = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|x64.Build.0 = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Debug|x86.Build.0 = Debug|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|x64.ActiveCfg = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|x64.Build.0 = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|x86.ActiveCfg = Release|Any CPU
+		{7432C5A0-8ECF-42F1-9F5A-95BDB8791671}.Release|x86.Build.0 = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|x64.Build.0 = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|x64.ActiveCfg = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|x64.Build.0 = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C7F44757-3202-456A-B676-E305E414732E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B7B4B22-EAFE-4DAC-8904-A643AF848676} = {D06FA303-2E69-4B2A-979C-4DE4825903D1}
+		{DC8450ED-641D-4B8F-9E16-85A22D71D4C8} = {D06FA303-2E69-4B2A-979C-4DE4825903D1}
+		{4BE28592-DE81-49A6-8B34-70A51E34F5F1} = {8A367DDA-5161-A942-4F09-60E4726C9306}
+	EndGlobalSection
+EndGlobal

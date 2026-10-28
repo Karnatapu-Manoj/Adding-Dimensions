@@ -1,0 +1,42 @@
+User Prompts from This Session
+============================
+
+This file lists the user-authored messages visible in this conversation, in chronological order. It does not include assistant messages or tool-generated questions.
+
+1. where am i
+
+2. in the given directory location, i'm having an exisitng .NET 8.0 Microservices project. D:\SchoolNet Projects\NISM Sync MicroServices using that create a same code base structure and code of JWTAuthenticationManager & OcelotGateway but in microservices have only Teachers folder as API Project. and create a codebase in the current directory Back-End CodeBase
+
+3. how can i grant access
+
+4. now create a back-end codeBase using the Reference Project in D:\SchoolNet Projects\NISM Sync MicroServices , but instead of creating the same code structure use 3 folders 1 is Microservices, 2 is JwtAuthenticationManager, 3 is OcelotGateWay, inside the microservices create a folder named as TeachersAPI just like UserAPI in the said reference Project. make sure to use the .net 10 latest stable version to create the Back-End CodeBase & in reference project we are using SQL Server, but in this Adding Dimensions we have to use the latest POSTGreSQL for Database connectivity and usage.
+
+5. i think the code which is developed is not soo understandable and it has to follow the same coding style of the reference Project given in D:\SchoolNet Projects\NISM Sync MicroServices. hence requesting to re-write the API's Controller and Services class .NET code in the same format as of reference given & make sure to use the ADO.NET style by using the Database only through Stored Procedure calls and same like reference project it should integrate the AES-GCM encryption and Decryption mechanism, relaiable response format just like NISM Sync MicroServices Reference Project. And create a separate folder named "DB Scripts" which consists of 2 folders one for Table creations in one folder and another folder for data retriving or data inserting or any data operations related stored procedures in another folder. no inline code based SQL queries has to be written.
+
+6. clone the Front-end CodeBase which is already designed and developed by front-end developers which is in the given github repository "https://github.com/VSKSurya/TeacherTraining.git" clone from this git repository and place it inside this location path given D:\SchoolNet Projects\Adding Dimensions\Front-End CodeBase
+
+7. based upon the cloned front-end project in the front-end CodeBase Folder. now we have to develop the API's for the entire Front-end Project using the currently generated .NET 10 Microservices Back-end CodeBase and the Communication has to be perfectly established between both the front-end and back-end CodeBase. we should not change any thing in the front-end codebase design and it's structure, and the database reference excel sheet given by the client is in the reference documents folder "D:\SchoolNet Projects\Adding Dimensions\Reference Documents" take reference of the Database design from the Excel sheet named "design thinking Db and partition.xlsx" and generate the API's using the given Database table structuring designs and in the same Reference document we also have the Business Requirement Document named "Training-Tracker-Business-Requirements v2.docx" use of this reference document to understand the application requirements and you can refer to the front-end codebase project for the front-end functionality. if you are able to access the PGAdmin 4 in my machine means , please create a Database and tables directly in the Postgre SQL using the reference of design thinking Db and partition.xlsx file. if you stuck in between means, please pause the execution and ask me and then rresume/continue the process. the front-end application is hosted in this URL : https://vsksurya.github.io/TeacherTraining/login after login with the pre-exisitng credentials we will be re-directing to the dashboard screen as given in the reference documents folder named as "Adding Dimensions Dashboard Screen.png"
+
+8. The local PostgreSQL service is running, but it requires authentication. Which PostgreSQL username, password, and database name should I use to create the application database and tables? You can instead put the connection string in an ignored appsettings.Local.json file in TeachersAPI and tell me it is ready.
+
+9. i have no idead of postgre SQL, but u can use the Admin credentials password is "admin@123"
+
+10. for time being keep the exisitng password/demo login initially. do not change the existing demo login credentials. connect everything locally first and open the project in google chrome browser to test it once, if it is ready fuly means
+
+11. integrate the Back-End CodeBase to the Front-End and start implementing the Login flow and Open Registration flow with OTP implementation. and finish the Project completely end-to-end from login to dashboard and internal page navigations with data presenting from database. if there is no data is present in the Database create a sample data and few logins based upon the roles given in the Reference documents and in the front-end codebase user.md file.
+
+12. Local email outbox for now
+
+13. tell me about this project and document it in the said location "D:\SchoolNet Projects\Adding Dimensions" and name the document as "Project Review" and mention each and everything related to major folders like Front-End CodeBase,Back-End CodeBase & Reference Documents and include the sample Demo Login Credentials and its passwords and Roles of those Sample Demo Credentials. along with this create an import file for the postgre SQL Database which is related to this Adding dimensions Back-End CodeBase. so that is any one wants to import into their local database means it would be easy and mention the steps to run the project locally in other machines clearly and precisiously with necessary commands and setup guidance of this project.
+
+14. push everything in the said location "D:\SchoolNet Projects\Adding Dimensions" to the new repository link : "https://github.com/Karnatapu-Manoj/Adding-Dimensions.git"
+
+15. Keep public; exclude private files
+
+16. Authorized
+
+17. re-open the confirmation authorization
+
+18. Authorized
+
+19. give me the list of all prompts given in this session in a text file format
