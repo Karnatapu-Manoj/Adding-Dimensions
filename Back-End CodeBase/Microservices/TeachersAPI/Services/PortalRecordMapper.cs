@@ -116,6 +116,11 @@ namespace TeachersAPI.Services
                     break;
                 case "trainees":
                     string traineeCode=Text(data,"traineeId",id);
+                    foreach(string field in new[]{"gender","designation"})if(data[field]!=null)values[field]=data[field];
+                    if(data["classesTaught"]!=null)values["classes_taught"]=data["classesTaught"];
+                    if(data["subjectsTaught"]!=null)values["subjects_taught"]=data["subjectsTaught"];
+                    if(data["teachingExperience"]!=null)values["teaching_experience"]=data["teachingExperience"];
+                    if(data["schoolUdise"]!=null)values["school_id"]=reference("schools",Text(data,"schoolUdise"),true);
                     values["trainee_code"]=traineeCode.Length>30?traineeCode[..30]:traineeCode;values["full_name"]=Text(data,"name",Text(data,"traineeName"));
                     values["is_active"]=data["active"] ?? new JValue(true);
                     break;
@@ -160,6 +165,7 @@ namespace TeachersAPI.Services
                     values["enrollment_id"]=enrollment().Value<long>("_dbId");
                     values["resource_id"]=reference("assessment-form-master",Text(data,"formId"),true);
                     values["kind"]=key=="feedback-records"?"feedback":"assessment";values["answers"]=data["answers"] ?? new JObject();
+                    values["rating_score"]=data["ratingScore"];values["rating_max_marks"]=data["ratingMaxMarks"];
                     values["score"]=data["score"];values["max_marks"]=data["maxMarks"];values["passed"]=data["passed"];
                     ownerId=userId;
                     break;

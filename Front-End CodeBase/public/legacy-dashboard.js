@@ -146,7 +146,7 @@
     updateKpi('Target Participants',formattedTarget,`${selectedAudience} target`);
     updateKpi('Participants Registered',totals.registered.toLocaleString('en-IN'),'Registered participants');
     updateKpi('Participants Trained',trainedText,`${completionPercent.toFixed(1)}% of target`);
-    updateKpi('Attendance Rate',`${attendancePercent.toFixed(1)}%`,'Attendance');
+    updateKpi('Attendance Rate',attendancePercent.toFixed(1)+'%','Attendance');
     // Batch counts are shown in the Batch Status panel instead of the KPI row.
     const progressValues={planned:totals.planned,registered:totals.registered,approved:totals.approved,attended:totals.attended,completed:totals.completed,certified:totals.certified};
     document.querySelectorAll('#training-progress .progress-row').forEach(row=>{
@@ -288,9 +288,9 @@
     if(!node.children.length){
       const batches=node.assignedBatches.filter(batch=>!selectedPhase||batch.phaseNumber===selectedPhase),completedBatches=batches.filter(batch=>batch.status==='completed').length;
       const metrics=batches.reduce((sum,batch)=>{const current=audienceMetrics(batch);for(const key of ['planned','registered','completed'])sum[key]+=current[key];return sum},{planned:0,registered:0,completed:0});
-      return {batches:batches.length,scheduled:batches.length,ongoing:batches.filter(batch=>batch.status==='ongoing').length,notStarted:batches.filter(batch=>batch.status==='upcoming').length,completedBatches,plannedUsers:metrics.planned,registeredUsers:metrics.registered,completedUsers:metrics.completed};
+      return {batches:batches.length,scheduled:batches.filter(batch=>batch.status==='upcoming').length,ongoing:batches.filter(batch=>batch.status==='ongoing').length,completedBatches,plannedUsers:metrics.planned,registeredUsers:metrics.registered,completedUsers:metrics.completed};
     }
-    return node.children.map(locationTotals).reduce((sum,item)=>({batches:sum.batches+item.batches,scheduled:sum.scheduled+item.scheduled,ongoing:sum.ongoing+item.ongoing,notStarted:sum.notStarted+item.notStarted,completedBatches:sum.completedBatches+item.completedBatches,plannedUsers:sum.plannedUsers+item.plannedUsers,registeredUsers:sum.registeredUsers+item.registeredUsers,completedUsers:sum.completedUsers+item.completedUsers}),{batches:0,scheduled:0,ongoing:0,notStarted:0,completedBatches:0,plannedUsers:0,registeredUsers:0,completedUsers:0});
+    return node.children.map(locationTotals).reduce((sum,item)=>({batches:sum.batches+item.batches,scheduled:sum.scheduled+item.scheduled,ongoing:sum.ongoing+item.ongoing,completedBatches:sum.completedBatches+item.completedBatches,plannedUsers:sum.plannedUsers+item.plannedUsers,registeredUsers:sum.registeredUsers+item.registeredUsers,completedUsers:sum.completedUsers+item.completedUsers}),{batches:0,scheduled:0,ongoing:0,completedBatches:0,plannedUsers:0,registeredUsers:0,completedUsers:0});
   }
   let locationPath=[];
   let locationSortDirection='desc';
@@ -308,10 +308,13 @@
       const stats=locationTotals(node),batchCompletionPercent=stats.batches?stats.completedBatches/stats.batches*100:0,completedPercent=stats.plannedUsers?stats.completedUsers/stats.plannedUsers*100:0;
       const sortValue=locationSortKey==='batchCompletionPercent'?batchCompletionPercent:locationSortKey==='completedPercent'?completedPercent:stats[locationSortKey];
       return {node,index,stats,batchCompletionPercent,completedPercent,sortValue};
-    }).sort((a,b)=>locationSortDirection==='asc'?a.sortValue-b.sortValue||a.node.name.localeCompare(b.node.name):b.sortValue-a.sortValue||a.node.name.localeCompare(b.node.name));
+    }).sort((a,b)=>{
+      if(locationSortKey==='state')return locationSortDirection==='asc'?a.node.name.localeCompare(b.node.name):b.node.name.localeCompare(a.node.name);
+      return locationSortDirection==='asc'?a.sortValue-b.sortValue||a.node.name.localeCompare(b.node.name):b.sortValue-a.sortValue||a.node.name.localeCompare(b.node.name);
+    });
     locationRows.innerHTML=sortedNodes.map(({node,index,stats,batchCompletionPercent,completedPercent})=>{
       const name=level<3?`<button type="button" class="location-name-button" data-location-index="${index}" aria-label="Show ${locationLabels[level+1]} locations for ${node.name}">${node.name}</button>`:node.name;
-      return `<tr><td>${name}</td><td>${stats.scheduled.toLocaleString('en-IN')}</td><td>${stats.ongoing.toLocaleString('en-IN')}</td><td>${stats.notStarted.toLocaleString('en-IN')}</td><td>${meter(batchCompletionPercent)}</td><td>${stats.plannedUsers.toLocaleString('en-IN')}</td><td>${stats.registeredUsers.toLocaleString('en-IN')}</td><td>${stats.completedUsers.toLocaleString('en-IN')}</td><td>${meter(completedPercent,'orange')}</td></tr>`;
+      return `<tr><td>${name}</td><td>${stats.scheduled.toLocaleString('en-IN')}</td><td>${stats.ongoing.toLocaleString('en-IN')}</td><td>${stats.completedBatches.toLocaleString('en-IN')}</td><td>${meter(batchCompletionPercent)}</td><td>${stats.plannedUsers.toLocaleString('en-IN')}</td><td>${stats.registeredUsers.toLocaleString('en-IN')}</td><td>${stats.completedUsers.toLocaleString('en-IN')}</td><td>${meter(completedPercent,'orange')}</td></tr>`;
     }).join('');
   }
   document.querySelectorAll('[data-location-sort]').forEach(button=>button.addEventListener('click',()=>{

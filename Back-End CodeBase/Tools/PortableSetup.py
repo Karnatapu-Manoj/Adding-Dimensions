@@ -42,6 +42,7 @@ def main():
         if not project.is_file():
             raise ValueError('Copy the Back-End CodeBase source folder first. Missing: '+str(project))
     configs = [api/'appsettings.Local.json', gateway/'appsettings.Local.json']
+    configs += [api.parent/name/'appsettings.Local.json' for name in ['UserAPI','BatchAPI','ReportAPI'] if (api.parent/name).is_dir()]
     if any(path.exists() for path in configs):
         raise ValueError('Local configuration already exists. Choose a fresh checkout/folder. Existing settings will not be replaced.')
     resources = backend/'.local/resources'

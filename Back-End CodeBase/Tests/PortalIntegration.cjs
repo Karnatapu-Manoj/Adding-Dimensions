@@ -13,6 +13,7 @@ async function loginWithOtp(userName,password='demo1@123'){
  return post('Account/VerifyLogin',{challengeId:challenge.challengeId,otp:readOtp(challenge.challengeId)});
 }
 async function main(){
+ require('node:child_process').execFileSync('python',[path.join(__dirname,'../Tools/RunLocalSql.py'),path.join(__dirname,'../DB Scripts/CleanupIntegrationFixtures.sql')],{cwd:path.join(__dirname,'..'),stdio:'pipe'});
  const cacheFile=path.join(__dirname,'../.local/integration-tokens.json');
  const tokens={};
  for(let n=1;n<=8;n++){if(tokens[n])continue;const login=await loginWithOtp('Demo'+n);assert.equal(login.user.userId,'Demo'+n);tokens[n]=login.jwtToken;fs.writeFileSync(cacheFile,JSON.stringify(tokens));}
@@ -63,7 +64,7 @@ async function main(){
  const feedback={...form,id:'TEST-FEEDBACK-'+uid,timeLimit:0,title:'Integration feedback',kind:'feedback',grading:'non-graded',stage:'feedback',passMarks:0,questions:[{id:'q1',prompt:'Was it useful?',options:['Yes','No'],points:0,required:true}]};
  snapshot=await save('AssessmentForms',[feedback],admin);
  const feedbackAttempt={...attempt,id:'TEST-FEEDBACK-ATT-'+uid,formId:feedback.id,kind:'feedback',grading:'non-graded',answers:{q1:'0'}};
- own=await save('Feedback',[feedbackAttempt],trainee);const feedbackResult=records(own,'feedback-records').find(r=>r.id===feedbackAttempt.id);assert.equal(feedbackResult.score,null);checks++;
+ own=await save('Feedback',[feedbackAttempt],trainee);const feedbackResult=records(own,'feedback-records').find(r=>r.id===feedbackAttempt.id);assert.equal(feedbackResult.score,null);assert.equal(feedbackResult.ratingScore,2);assert.equal(feedbackResult.ratingMaxMarks,2);checks+=3;
  snapshot=await post('Workspace/GetData',{},admin);
  const template=records(snapshot,'certificate-templates').find(t=>t.mode==='Hybrid');
  const certificate={id:'TEST-CERT-'+uid,registrationId:registration.id,batchId:batch.id,traineeId:person.id,traineeName:'FORGED NAME',templateSnapshot:{...template,title:'FORGED TEMPLATE'},templateMode:'Hybrid',status:'Issued',issuedAt:new Date().toISOString(),certificateNumber:'FORGED-NUMBER'};

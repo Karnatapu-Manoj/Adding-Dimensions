@@ -1,7 +1,7 @@
-// Source: KGBV sample school list.xlsx, worksheet "Table 1"; 750 school rows.
+// Source: KGBV school list.xlsx, worksheet "Table 1"; 750 school rows.
 export type KgbvSchool = { state: string; district: string; block: string; school: string; udise: string; enrollment: number };
 
-export const kgbvSchools: KgbvSchool[] = [
+export let kgbvSchools: KgbvSchool[] = [
   {
     "state": "Andhra Pradesh",
     "district": "Srikakulam",
@@ -6003,3 +6003,8 @@ export const kgbvSchools: KgbvSchool[] = [
     "enrollment": 200
   }
 ];
+
+if(typeof window !== "undefined" && typeof window.addEventListener === "function") window.addEventListener("portal:hydrated", event => {
+  const rows = (event as CustomEvent).detail?.["teacher-training-schools"];
+  if(Array.isArray(rows)) kgbvSchools = rows;
+});

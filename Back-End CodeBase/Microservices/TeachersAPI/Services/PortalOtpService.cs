@@ -50,7 +50,7 @@ namespace TeachersAPI.Services
             return result;
         }
 
-        public async Task<JObject> Verify(string purpose, string challengeId, string otp, CancellationToken ct)
+        public async Task<JObject> Verify(string purpose, string challengeId, string otp, CancellationToken ct, bool preview = false)
         {
             if (!Guid.TryParse(challengeId, out Guid id) || otp.Length != 6 || !otp.All(char.IsAsciiDigit))
                 throw new ValidationException("Enter the six-digit verification code and a valid request.");
@@ -60,7 +60,7 @@ namespace TeachersAPI.Services
                 new NpgsqlParameter("p_purpose", NpgsqlDbType.Varchar) { Value = purpose },
                 new NpgsqlParameter("p_otp_hash", NpgsqlDbType.Varchar) { Value = Hash(id.ToString()+":"+otp) }
             };
-            JObject result = await _repository.ExecutePayload("public.usp_portal_verify_otp", parameters, ct);
+            JObject result = await _repository.ExecutePayload(preview ? "public.usp_portal_check_registration_otp" : "public.usp_portal_verify_otp", parameters, ct);
             if (!result.Value<bool>("verified")) throw new ValidationException("The code is incorrect, expired, already used, or has reached its three-attempt limit. Request a new code.");
             JObject envelope = (JObject)result["protectedPayload"]!;
             result["payload"] = JObject.Parse(AesGcmEncryptionDecryption.Decrypt(envelope.Value<string>("data")!,

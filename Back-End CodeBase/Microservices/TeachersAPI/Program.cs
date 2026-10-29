@@ -121,7 +121,7 @@ app.UseStatusCodePages(async context =>
             : "The request could not be completed."
     });
 });
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -114,15 +114,37 @@ namespace TeachersAPI.Services
                 int attempts=Rows(snapshot,key).OfType<JObject>().Count(a=>Text(a,"formId")==Text(form,"id") && Text(a,"batchId")==Text(record,"batchId") && a.Value<long?>("_ownerId")==userId);
                 Require(attempts<form.Value<int>("attemptLimit"),"The attempt limit has been reached.");
                 JObject answers=record["answers"] as JObject ?? new JObject();
-                decimal score=0,max=0;
+                decimal score=0,max=0,rating=0,ratingMax=0;
                 foreach(JObject q in form["questions"] as JArray ?? new JArray())
                 {
                     string answer=answers.Value<string>(Text(q,"id")) ?? string.Empty;
                     Require(form.Value<bool?>("allowUnanswered")==true || q.Value<bool?>("required")==false || answer.Trim().Length>0,"Answer all required questions.");
                     decimal marks=q.Value<decimal?>("points") ?? 1;max+=marks;
                     if(answer==Text(q,"correctIndex"))score+=marks;
+                    JArray options=q["options"] as JArray ?? new JArray();
+                    if(Text(q,"selection")=="multiple")
+                    {
+                        JArray selected;
+                        try {selected=string.IsNullOrEmpty(answer)?new JArray():JArray.Parse(answer);}
+                        catch {throw new ValidationException("Select valid answer options.");}
+                        Require(selected.All(v=>int.TryParse(v.ToString(),out int index) && index>=0 && index<options.Count),"Select valid answer options.");
+                        Require(q.Value<bool?>("required")==false || form.Value<bool?>("allowUnanswered")==true || selected.Count>0,"Answer all required questions.");
+                    }
+                    else if(options.Count>0 && answer.Length>0)
+                    {
+                        Require(int.TryParse(answer,out int index) && index>=0 && index<options.Count,"Select a valid answer option.");
+                        if(key=="feedback-records" && options.Count>=2)
+                        {
+                            string option=options[index]!.ToString();
+                            var match=System.Text.RegularExpressions.Regex.Match(option,@"^\s*(\d+)");
+                            rating+=match.Success?decimal.Parse(match.Groups[1].Value):options.Count-index;
+                            ratingMax+=match.Success?Math.Max(1,options.Select(o=>System.Text.RegularExpressions.Regex.Match(o.ToString(),@"^\s*(\d+)")).Max(m=>m.Success?decimal.Parse(m.Groups[1].Value):0)):options.Count;
+                        }
+                    }
                 }
                 bool graded=key=="assessment-records" && Text(form,"grading")=="graded";
+                record["ratingScore"]=key=="feedback-records" && ratingMax>0?new JValue(rating):JValue.CreateNull();
+                record["ratingMaxMarks"]=key=="feedback-records" && ratingMax>0?new JValue(ratingMax):JValue.CreateNull();
                 record["score"]=graded?new JValue(score):JValue.CreateNull();
                 record["maxMarks"]=graded?new JValue(max):JValue.CreateNull();
                 record["passed"]=graded?new JValue(score>=(form.Value<decimal?>("passMarks") ?? 0)):JValue.CreateNull();

@@ -1,0 +1,46 @@
+namespace UserAPI.Models
+{
+    public static class PortalCollections
+    {
+        public static readonly Dictionary<string,string> Tables = new Dictionary<string,string>
+        {
+            ["teacher-training-projects"]="project",
+            ["teacher-training-plans"]="training_plan",
+            ["teacher-training-project-plan-associations"]="project_plan_association",
+            ["teacher-training-batch-plan-uses"]="training_batch",
+            ["teacher-training-trainer-profiles"]="trainer",
+            ["teacher-training-trainer-availability"]="trainer_availability",
+            ["teacher-training-trainees"]="trainee",
+            ["teacher-training-registrations"]="batch_enrollment",
+            ["teacher-training-attendance-records"]="attendance",
+            ["teacher-training-attendance-exclusions"]="attendance_exclusion",
+            ["teacher-training-assessment-form-master"]="learning_resource",
+            ["teacher-training-assessment-records"]="assessment_attempt",
+            ["teacher-training-feedback-records"]="assessment_attempt",
+            ["teacher-training-certificate-templates"]="certificate_template",
+            ["teacher-training-certificates"]="certificate_record",
+            ["teacher-training-holidays"]="m_holiday",
+            ["teacher-training-users"]="app_user",
+            ["teacher-training-odoo-project-catalog"]="odoo_project_catalog",
+            ["teacher-training-schools"]="m_school",
+            ["teacher-training-learning-resources"]="learning_resource",
+            ["teacher-training-resource-usage"]="resource_progress",
+            ["teacher-training-external-course-records"]="external_course_record",
+            ["teacher-training-eligible-teachers"]="school_eligibility",
+            ["teacher-training-eligible-students"]="school_eligibility",
+            ["teacher-training-audit"]="audit_log",
+            ["teacher-training-trainer-audit"]="audit_log",
+            ["teacher-training-certificate-audit"]="audit_log",
+            ["teacher-training-school-assignments"]="portal_setting",
+            ["teacher-training-school-access"]="portal_setting",
+            ["teacher-training-school-admin-assignments"]="portal_setting",
+            ["teacher-training-state-access"]="portal_setting",
+            ["teacher-training-cluster-master"]="portal_setting",
+            ["teacher-training-approved-venues"]="portal_setting",
+            ["teacher-training-school-eligibility"]="portal_setting",
+            ["teacher-training-eligible-participants"]="portal_setting",
+            ["teacher-training-holiday-policy"]="portal_setting",
+            ["teacher-training-batch-dependent-records"]="portal_setting"
+        };
+    }
+}

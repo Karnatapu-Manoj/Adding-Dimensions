@@ -54,6 +54,7 @@ export function installSnapshot(snapshot: Snapshot) {
   window.PORTAL_DASHBOARD = snapshot._dashboard as Window['PORTAL_DASHBOARD'];
   for (const key of Object.keys(routes)) {
     let value = snapshot[key] ?? [];
+    if (key === 'teacher-training-feedback-records' && Array.isArray(value)) value = value.map(row => ({...row, score: row.ratingScore ?? row.score, maxMarks: row.ratingMaxMarks ?? row.maxMarks}));
     if (scalarKeys.has(key) && Array.isArray(value)) value = value[0]?.value ?? (key.endsWith('policy') ? 'block' : {});
     cache.set(key, typeof value === 'string' ? value : JSON.stringify(value));
   }
@@ -62,7 +63,7 @@ export function installSnapshot(snapshot: Snapshot) {
 
 export async function hydrateData() {
   if (!accessToken()) { installSnapshot(await apiPost<Snapshot>('Public/GetData')); return; }
-  const snapshot = await apiPost<Snapshot>('Workspace/GetData');
+  const snapshot = { ...await apiPost<Snapshot>('Workspace/GetData'), ...await apiPost<Snapshot>('Reports/GetData') };
   installSnapshot(snapshot);
   return snapshot;
 }

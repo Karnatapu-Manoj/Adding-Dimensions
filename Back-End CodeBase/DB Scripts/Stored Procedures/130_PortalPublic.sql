@@ -3,7 +3,7 @@ LANGUAGE plpgsql AS $procedure$
 DECLARE snapshot jsonb;
 BEGIN
     snapshot:=jsonb_build_object('teacher-training-batch-plan-uses',
-        (SELECT COALESCE(jsonb_agg(ui_data-'_contacts'),'[]') FROM public.training_batch WHERE NOT portal_deleted),
+        (SELECT COALESCE(jsonb_agg((ui_data-'_contacts')||jsonb_build_object('registrationCount',(SELECT count(*) FROM public.batch_enrollment e WHERE e.batch_id=training_batch.batch_id AND NOT e.portal_deleted AND e.approval_status NOT IN ('REJECTED','WITHDRAWN')))),'[]') FROM public.training_batch WHERE NOT portal_deleted),
         'teacher-training-schools',(SELECT COALESCE(jsonb_agg(ui_data),'[]') FROM public.m_school WHERE NOT portal_deleted),
         'teacher-training-plans',(SELECT COALESCE(jsonb_agg(jsonb_build_object('id',external_id,'code',plan_code,'name',plan_name)),'[]') FROM public.training_plan WHERE NOT portal_deleted));
     p_result:=jsonb_build_array(jsonb_build_object('payload',snapshot::text));
@@ -17,7 +17,7 @@ DECLARE batch_row public.training_batch; person_row public.trainee; email_person
     registration_id text; person_id bigint; reg_id bigint; person_external text; local_today date; created_account boolean:=false;
 BEGIN
     SELECT * INTO batch_row FROM public.training_batch WHERE NOT portal_deleted AND
-        (external_id=p_batch_code OR lower(batch_code)=lower(p_batch_code)) FOR UPDATE;
+        (external_id=p_batch_code OR lower(batch_code)=lower(p_batch_code) OR COALESCE(ui_data->'legacyBatchCodes','[]') @> jsonb_build_array(p_batch_code)) FOR UPDATE;
     IF NOT FOUND OR NOT batch_row.open_registration OR batch_row.is_closed OR
         COALESCE(batch_row.ui_data->>'status','') IN ('Cancelled','Archived','Completed') THEN
         RAISE EXCEPTION 'This batch is not accepting registrations.' USING ERRCODE='22023';
@@ -27,7 +27,7 @@ BEGIN
         local_today>batch_row.start_date+COALESCE((batch_row.ui_data->>'registrationWindowAfterDays')::integer,0) THEN
         RAISE EXCEPTION 'The registration window is closed.' USING ERRCODE='22023';
     END IF;
-    IF (SELECT count(*) FROM public.batch_enrollment WHERE batch_id=batch_row.batch_id AND NOT portal_deleted AND approval_status<>'REJECTED')>=batch_row.capacity THEN
+    IF (SELECT count(*) FROM public.batch_enrollment WHERE batch_id=batch_row.batch_id AND NOT portal_deleted AND approval_status NOT IN ('REJECTED','WITHDRAWN'))>=batch_row.capacity THEN
         RAISE EXCEPTION 'This batch has reached its registration capacity.' USING ERRCODE='22023';
     END IF;
     SELECT trainee_id INTO email_person FROM public.trainee WHERE email_hash=p_person->>'emailHash' AND NOT is_erased;
@@ -39,14 +39,25 @@ BEGIN
         RAISE EXCEPTION 'The contact details match different trainee records. Contact an administrator.' USING ERRCODE='22023';
     END IF;
     person_id:=COALESCE(email_person,phone_person);
+    IF person_id IS NULL AND p_person->'data'->>'schoolUdise' IS NOT NULL AND EXISTS(
+        SELECT 1 FROM public.trainee t WHERE NOT t.is_erased AND NOT t.portal_deleted
+        AND lower(regexp_replace(t.full_name,'[^[:alnum:]]','','g'))=lower(regexp_replace(p_person->>'name','[^[:alnum:]]','','g'))
+        AND (t.ui_data->>'schoolUdise'=p_person->'data'->>'schoolUdise' OR t.school_id=
+            (SELECT school_id FROM public.m_school WHERE udise_code=p_person->'data'->>'schoolUdise')))
+    THEN
+        RAISE EXCEPTION 'A possible trainee record already exists for this name and school. Recover the existing Trainee ID or contact an administrator.' USING ERRCODE='22023';
+    END IF;
     IF person_id IS NULL THEN
         created_account:=true;
         person_external:=p_person->>'id';
         INSERT INTO public.trainee(trainee_code,full_name,email_hash,mobile_hash,email_enc,mobile_enc,email_mask,mobile_mask,
-            external_id,ui_data,portal_collection,portal_project_id)
+            external_id,ui_data,portal_collection,portal_project_id,school_id,gender,designation,classes_taught,subjects_taught,teaching_experience)
         VALUES(person_external,p_person->>'name',p_person->>'emailHash',p_person->>'phoneHash',
             decode(p_person->>'emailHex','hex'),decode(p_person->>'phoneHex','hex'),p_person->>'emailMask',p_person->>'phoneMask',
-            person_external,p_person->'data','teacher-training-trainees',batch_row.project_id) RETURNING trainee_id INTO person_id;
+            person_external,p_person->'data','teacher-training-trainees',batch_row.project_id,
+            (SELECT school_id FROM public.m_school WHERE udise_code=p_person->'data'->>'schoolUdise'),
+            p_person->'data'->>'gender',p_person->'data'->>'designation',COALESCE(p_person->'data'->'classesTaught','[]'),
+            COALESCE(p_person->'data'->'subjectsTaught','[]'),p_person->'data'->>'teachingExperience') RETURNING trainee_id INTO person_id;
     ELSE
         SELECT external_id INTO person_external FROM public.trainee WHERE trainee_id=person_id;
     END IF;

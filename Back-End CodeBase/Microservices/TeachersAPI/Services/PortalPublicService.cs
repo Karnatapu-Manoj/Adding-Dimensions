@@ -28,33 +28,44 @@ namespace TeachersAPI.Services
             try
             {
                 if(action=="GetData")msg.Data=await _repository.ExecutePayload("public.usp_portal_public_data",new List<NpgsqlParameter>(),ct);
+                else if(action=="VerifyRegistration")
+                {
+                    await _otp.Verify("REGISTRATION",data.Value<string>("challengeId") ?? string.Empty,data.Value<string>("otp") ?? string.Empty,ct,true);
+                    msg.Data=new JObject{["verified"]=true};
+                }
                 else if(action=="RequestRegistration" || action=="Register")
                 {
+                    bool finalConsent=data.Value<bool?>("consentProvided")==true;
                     if (action == "Register")
                     {
                         JObject verified = await _otp.Verify("REGISTRATION", data.Value<string>("challengeId") ?? string.Empty,
                             data.Value<string>("otp") ?? string.Empty, ct);
                         data = (JObject)verified["payload"]!;
+                        if(finalConsent)data["consentProvided"]=true;
                     }
                     string name=data.Value<string>("name")?.Trim() ?? string.Empty;
                     string email=data.Value<string>("email")?.Trim() ?? string.Empty;
                     string phone=data.Value<string>("phone")?.Trim() ?? string.Empty;
-                    if(data.Value<bool?>("consentProvided")!=true)throw new ValidationException("Consent to using your contact details for training registration is required.");
+                    if((action=="Register" || data.Value<int?>("profileVersion")!=2) && data.Value<bool?>("consentProvided")!=true)throw new ValidationException("Consent to using your contact details for training registration is required.");
                     if(name.Length<1 || name.Length>150 || (email.Length==0 && phone.Length==0) ||
                         (email.Length>0 && !new EmailAddressAttribute().IsValid(email)))throw new ValidationException("Enter a valid name and contact details.");
                     if (phone.Length > 0 && (new string(phone.Where(char.IsDigit).ToArray()).Length < 10 || phone.Length > 20))
                         throw new ValidationException("Enter a valid mobile number.");
+                    if(data.Value<int?>("profileVersion")==2)await ValidateTeachingProfile(data,ct);
                     if (action == "RequestRegistration")
                     {
                         msg.Data = await _otp.Create("REGISTRATION", null, email.Length > 0 ? email : phone,
-                            new JObject { ["name"] = name, ["email"] = email, ["phone"] = phone,
-                                ["category"] = data["category"], ["batchCode"] = data["batchCode"], ["consentProvided"] = true }, ct);
+                            data, ct);
                         msg.IsSuccess = true; msg.StatusCode = 200; msg.ReturnMessage = "Verification code created.";
                         return msg;
                     }
                     string id="TR-"+Guid.NewGuid().ToString("N")[..12].ToUpperInvariant();
                     JObject person=_pii.Protect(new JObject { ["id"]=id,["traineeId"]=id,["name"]=name,["email"]=email,
-                        ["phone"]=phone,["category"]=data["category"],["consentProvided"]=true,["createdAt"]=DateTime.UtcNow },null);
+                        ["phone"]=phone,["category"]=data["category"],["consentProvided"]=true,["createdAt"]=DateTime.UtcNow,
+                        ["profileVersion"]=data["profileVersion"],["schoolUdise"]=data["schoolUdise"],["schoolName"]=data["schoolName"],
+                        ["state"]=data["state"],["district"]=data["district"],["block"]=data["block"],["gender"]=data["gender"],
+                        ["designation"]=data["designation"],["classesTaught"]=data["classesTaught"],["subjectsTaught"]=data["subjectsTaught"],
+                        ["teachingExperience"]=data["teachingExperience"] },null);
                     JObject contact=new JObject { ["id"]=id,["name"]=name,["data"]=person };
                     foreach(string field in new[]{"email","phone"})
                     {
@@ -100,6 +111,24 @@ namespace TeachersAPI.Services
             }
             catch(Exception ex){ResponseHelper.SetError(msg,ex,_logger,action);}
             return msg;
+        }
+        private async Task ValidateTeachingProfile(JObject data,CancellationToken ct)
+        {
+            foreach(string field in new[]{"state","district","block","schoolUdise","gender","designation","teachingExperience"})
+                if(string.IsNullOrWhiteSpace(data.Value<string>(field)))throw new ValidationException("Complete all required school and teaching profile fields.");
+            if(data["classesTaught"] is not JArray classes || classes.Count==0 || classes.Any(v=>!new[]{"Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12"}.Contains(v.ToString())))
+                throw new ValidationException("Select valid classes taught.");
+            if(data["subjectsTaught"] is not JArray subjects || subjects.Count==0 || subjects.Any(v=>!new[]{"Languages","English","Science","Mathematics","Social Studies","Computer-CT","Vocational","Other"}.Contains(v.ToString())))
+                throw new ValidationException("Select valid subjects taught.");
+            if(!new[]{"Female","Male","Prefer not to say","Other"}.Contains(data.Value<string>("gender")) ||
+                !new[]{"Teacher","Head Teacher","Other","Warden"}.Contains(data.Value<string>("designation")) ||
+                !new[]{"Less Than 1 Year","1-5 Years","6-10 Years","11-15 Years","More than 15 Years"}.Contains(data.Value<string>("teachingExperience")))
+                throw new ValidationException("Select valid teaching profile options.");
+            JObject masters=await _repository.ExecutePayload("public.usp_portal_public_data",new List<NpgsqlParameter>(),ct);
+            JObject? school=(masters["teacher-training-schools"] as JArray)?.OfType<JObject>().FirstOrDefault(s=>s.Value<string>("udise")==data.Value<string>("schoolUdise"));
+            if(school==null || new[]{"state","district","block"}.Any(field=>school.Value<string>(field)!=data.Value<string>(field)))
+                throw new ValidationException("Select a valid school in the chosen state, district and block.");
+            data["schoolName"]=school["school"];
         }
         private async Task<string> WriteMail(string recipient,string subject,string body,CancellationToken ct)
         {

@@ -3,5 +3,6 @@ dist/
 .vite/
 *.tsbuildinfo
 
+# Machine-local API configuration
 .env.local
 .env.*.local

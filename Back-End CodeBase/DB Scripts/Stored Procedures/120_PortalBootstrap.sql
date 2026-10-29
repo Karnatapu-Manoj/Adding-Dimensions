@@ -14,8 +14,11 @@ BEGIN
         SELECT role_id INTO target_role_id FROM public.m_role WHERE role_code=item->>'role';
         INSERT INTO public.app_user(login_id,full_name,role_id,password_hash,must_change_password,external_id,
             portal_collection,ui_data)
-        VALUES(item->>'userId',item->>'userId',target_role_id,item->>'passwordHash',false,item->>'userId',
-            'teacher-training-users',jsonb_build_object('id',item->>'userId','userId',item->>'userId','role',item->>'role','active',true))
+        VALUES(item->>'userId',COALESCE(NULLIF(item->>'fullName',''),item->>'userId'),target_role_id,
+            item->>'passwordHash',false,item->>'userId','teacher-training-users',
+            jsonb_build_object('id',item->>'userId','userId',item->>'userId','fullName',
+                COALESCE(NULLIF(item->>'fullName',''),item->>'userId'),'role',item->>'role',
+                'active',COALESCE((item->>'active')::boolean,true)))
         ON CONFLICT(login_id) DO NOTHING;
     END LOOP;
     UPDATE public.app_user SET portal_owner_user_id=user_id WHERE portal_owner_user_id IS NULL;
@@ -49,7 +52,8 @@ CREATE OR REPLACE PROCEDURE public.usp_portal_seed_scopes(IN p_project_id intege
 LANGUAGE plpgsql AS $procedure$
 DECLARE target record;
 BEGIN
-    FOR target IN SELECT user_id FROM public.app_user WHERE login_id IN ('Demo1','Demo3','Demo4','Demo5','Demo6','Demo8') LOOP
+    FOR target IN SELECT user_id FROM public.app_user WHERE login_id IN
+        ('Demo1','Demo3','Demo4','Demo5','Demo6','Demo8','Demo9','Demo10','Demo11','Demo12','Demo13') LOOP
         IF NOT EXISTS(SELECT 1 FROM public.user_access_scope WHERE user_id=target.user_id AND project_id=p_project_id) THEN
             INSERT INTO public.user_access_scope(user_id,project_id) VALUES(target.user_id,p_project_id);
         END IF;

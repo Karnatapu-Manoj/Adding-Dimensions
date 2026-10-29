@@ -29,7 +29,8 @@ $procedure$;
 CREATE OR REPLACE PROCEDURE public.usp_portal_apply(IN p_user_id bigint,IN p_collection varchar,
     IN p_rows jsonb,IN p_deletes jsonb,INOUT p_result jsonb DEFAULT NULL)
 LANGUAGE plpgsql AS $procedure$
-DECLARE config public.portal_collection; actor_role_code text; row_input jsonb; row_values jsonb;
+DECLARE certificate_number_value text; certificate_prefix text; certificate_sequence bigint;
+    config public.portal_collection; actor_role_code text; row_input jsonb; row_values jsonb;
     old_row jsonb; returned_id bigint; col_names text; col_values text; update_values text;
     ext_id text; old_version bigint; delete_input jsonb; project_id integer; owner_id bigint; batch_id bigint;
 BEGIN
@@ -74,6 +75,19 @@ BEGIN
             SELECT 1 FROM information_schema.columns c WHERE c.table_schema='public'
             AND c.table_name=config.table_name AND c.column_name=k AND c.is_identity='NO')) THEN
             RAISE EXCEPTION 'Invalid record columns.' USING ERRCODE='22023';
+        END IF;
+        IF config.table_name='certificate_record' AND old_row IS NULL THEN
+            PERFORM pg_advisory_xact_lock(hashtextextended('portal_certificate_number',0));
+            certificate_number_value:=row_values->>'certificate_number';
+            certificate_sequence:=COALESCE(substring(certificate_number_value from '([0-9]+)$')::bigint,0);
+            certificate_prefix:=regexp_replace(certificate_number_value,'[0-9]+$','');
+            IF certificate_prefix=certificate_number_value THEN certificate_prefix:=certificate_number_value||'-'; END IF;
+            WHILE EXISTS(SELECT 1 FROM public.certificate_record WHERE certificate_number=certificate_number_value) LOOP
+                certificate_sequence:=certificate_sequence+1;
+                certificate_number_value:=certificate_prefix||lpad(certificate_sequence::text,greatest(4,length(certificate_sequence::text)),'0');
+            END LOOP;
+            row_values:=jsonb_set(row_values,'{certificate_number}',to_jsonb(certificate_number_value));
+            row_values:=jsonb_set(row_values,'{ui_data,certificateNumber}',to_jsonb(certificate_number_value));
         END IF;
         SELECT string_agg(format('%I',key),','),string_agg(format('r.%I',key),','),
             string_agg(format('%I=EXCLUDED.%I',key,key),',')

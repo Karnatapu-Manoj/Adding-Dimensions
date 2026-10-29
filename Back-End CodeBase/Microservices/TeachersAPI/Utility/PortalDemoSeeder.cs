@@ -105,7 +105,14 @@ namespace TeachersAPI.Utility
                 snapshot=await repository.ApplyChanges(adminId,"teacher-training-assessment-form-master",
                     new JArray(mapper.Prepare(adminId,"schoolnet-super-admin","teacher-training-assessment-form-master",form,snapshot)),new JArray(),ct);
             }
-            Console.WriteLine("Demo1–Demo8 accounts and existing sample records are seeded. Existing accounts and records were not overwritten.");
+            // Import supplied upstream form definitions, without inventing submissions or grades.
+            foreach(JObject form in source["teacher-training-assessment-form-master"] as JArray ?? new JArray())
+            {
+                if(Find(snapshot,"assessment-form-master",Text(form,"id"))!=null)continue;
+                snapshot=await repository.ApplyChanges(adminId,"teacher-training-assessment-form-master",
+                    new JArray(mapper.Prepare(adminId,"schoolnet-super-admin","teacher-training-assessment-form-master",form,snapshot)),new JArray(),ct);
+            }
+            Console.WriteLine("Demo1–Demo13 accounts and existing sample records are seeded. Existing accounts and records were not overwritten.");
         }
     }
 }

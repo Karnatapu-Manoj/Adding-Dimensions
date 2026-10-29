@@ -1,6 +1,6 @@
 # Adding Dimensions - local integrated application
 
-The existing React frontend connects to the .NET 10 TeachersAPI through Ocelot.
+The existing React frontend connects to four independent .NET 10 API projects through Ocelot: UserAPI, BatchAPI, ReportAPI and TeachersAPI.
 PostgreSQL `adding_dimensions` holds operational data. The frontend layout,
 styles, assets and folder structure are retained; authentication, data access and
 screen handlers now use the API. New OTP controls use the existing screen styling.
@@ -14,15 +14,33 @@ From `Back-End CodeBase`:
 ```
 
 If the project is already running, use `Stop-Local.ps1` before rebuilding or restarting.
-The script runs the three services in hidden processes and opens Chrome when requested.
+The script runs the four APIs, gateway and frontend in hidden processes and opens Chrome when requested.
 
 | Service | Local URL |
 | --- | --- |
 | Frontend | http://localhost:5173/TeacherTraining/login |
 | Open registration | http://localhost:5173/TeacherTraining/register?batch=BATCH-DEMO-NOV |
 | Ocelot gateway | http://localhost:5100 |
-| API Swagger | http://localhost:5101/swagger |
+| UserAPI Swagger | http://localhost:5101/swagger |
+| BatchAPI Swagger | http://localhost:5102/swagger |
+| ReportAPI Swagger | http://localhost:5103/swagger |
+| TeachersAPI Swagger | http://localhost:5104/swagger |
 | Database readiness | http://localhost:5100/api/Health/ready |
+
+Swagger UI and its OpenAPI document are enabled for TeachersAPI in the `Development`
+and `Local` environments. Run either launch profile from `Back-End CodeBase`:
+
+```powershell
+dotnet run --project .\Microservices\TeachersAPI --launch-profile http
+# Or use the Local environment:
+dotnet run --project .\Microservices\TeachersAPI --launch-profile Local
+```
+
+Open http://localhost:5101/swagger (the launch profiles also open it when launched
+from an IDE). The OpenAPI document is at http://localhost:5101/swagger/v1/swagger.json.
+Other environments, including Production and Staging, do not expose Swagger.
+Use the Development profile or `Start-Local.ps1` for the full local application,
+including its Development-only OTP outbox.
 
 The ignored `Microservices/TeachersAPI/appsettings.Local.json` contains the application
 connection, JWT and encryption settings. Ocelot has its own ignored local configuration.
@@ -45,6 +63,16 @@ preserved by seeding and protected from the password-reset flow.
 | Demo6 | Trainer |
 | Demo7 | Trainee |
 | Demo8 | Reporting/Audit User |
+
+The additional role-based demo accounts use the same password, **`demo1@123`**:
+
+| User ID | Sample name | Role |
+| --- | --- | --- |
+| Demo9 | Aarav Sharma | School Admin |
+| Demo10 | Meera Iyer | School Admin |
+| Demo11 | Rohan Kulkarni | Trainer |
+| Demo12 | Kavya Nair | Trainer |
+| Demo13 | Arjun Reddy | Trainee |
 
 Enter the demo ID and password, select **Sign in**, then **Open local email outbox**.
 Copy the six-digit code into the verification field and select **Verify and sign in**.
@@ -91,7 +119,10 @@ No mock certificates or completed assessments are invented for trainees.
 ## Code and database structure
 
 ```text
-Microservices/TeachersAPI/  Controllers, Services, Models, Utility
+Microservices/UserAPI/      Login, accounts, users, schools, teachers, trainers and trainees
+Microservices/BatchAPI/     Batches, plans, attendance, learning, assessments and certificates
+Microservices/ReportAPI/    Audits and eligibility/reporting endpoints
+Microservices/TeachersAPI/  Retained original teacher CRUD/auth API and maintenance seed tools (port 5104)
 JwtAuthenticationManager/ JWT/session validation and ADO.NET SqlHelper
 OcelotGateWay/             Gateway routes, authentication and local CORS
 DB Scripts/
@@ -149,3 +180,24 @@ sign-off. Real OTP delivery and live Odoo/external-course connectors are not con
 Odoo currently uses local staging, as specified. Certificate issuance follows the
 existing administrator screen; a separate trainer-final-approval UI/workflow, advanced
 privacy administration and production hosting require their own acceptance/configuration.
+
+Each new project contains Controllers, Services, Models, Utility, Properties,
+Program.cs, appsettings.json and its own .csproj, and references JwtAuthenticationManager.
+Each builds and runs independently. The existing ADO.NET stored procedures,
+AES-GCM, JWT/session checks, response contracts and PostgreSQL database are retained.
+Application service/model implementations currently exist in each project; changes
+to common workflows must be kept consistent across these copies.
+
+Ocelot routes the existing `/api/{Controller}/*` URLs to the owning service:
+UserAPI on 5101, BatchAPI on 5102, ReportAPI on 5103 and TeachersAPI on 5104. It also accepts the
+`/api/UserAPI/*`, `/api/BatchAPI/*`, `/api/ReportAPI/*` and `/api/TeacherAPI/*` aliases.
+The frontend continues using its existing URLs through port 5100.
+`Start-Local.ps1` starts all four services, Ocelot and Vite; `Stop-Local.ps1`
+stops the tracked processes. TeachersAPI now runs on port 5104 and is started by the integrated launcher. The service-local ignored settings use the
+same database, JWT, transport and PII keys; resource files and the OTP outbox
+remain in the backend's shared .local directory.
+
+The refreshed upstream frontend is integrated as described in INTEGRATION-ANALYSIS.md.
+After importing an older database, run `python Tools/DeployLocalDatabase.py` to
+apply the latest teaching-profile, OTP-verification, rating and batch-code scripts.
+The new browser regression can be run with `node Tests/LatestRegistrationBrowser.cjs`.

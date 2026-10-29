@@ -1,5 +1,51 @@
 type Envelope = { encryptedData?: string; salt?: string; nonce?: string; tag?: string; isSuccess?: boolean; statusCode?: number; returnMessage?: string; data?: unknown };
 export const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5100').replace(/\/$/, '');
+const serviceRoutes: Record<string, string> = {
+  "Reports": "ReportAPI",
+  "Account": "UserAPI",
+  "Health": "ReportAPI",
+  "Login": "TeacherAPI",
+  "Public": "UserAPI",
+  "Registrations": "UserAPI",
+  "Schools": "UserAPI",
+  "Teachers": "TeacherAPI",
+  "Trainees": "UserAPI",
+  "TrainerAvailability": "UserAPI",
+  "Trainers": "UserAPI",
+  "Users": "UserAPI",
+  "Workspace": "UserAPI",
+  "PortalSettings": "UserAPI",
+  "AssessmentAttempts": "BatchAPI",
+  "AssessmentForms": "BatchAPI",
+  "Assessments": "BatchAPI",
+  "Attendance": "BatchAPI",
+  "AttendanceExclusions": "BatchAPI",
+  "Batches": "BatchAPI",
+  "Certificates": "BatchAPI",
+  "CertificateTemplates": "BatchAPI",
+  "ExternalCourses": "BatchAPI",
+  "Feedback": "BatchAPI",
+  "Holidays": "BatchAPI",
+  "OdooProjects": "BatchAPI",
+  "ProjectPlans": "BatchAPI",
+  "Projects": "BatchAPI",
+  "ResourceFiles": "BatchAPI",
+  "ResourceProgress": "BatchAPI",
+  "Resources": "BatchAPI",
+  "TrainingPlans": "BatchAPI",
+  "Audit": "ReportAPI",
+  "CertificateAudit": "ReportAPI",
+  "EligibleStudents": "ReportAPI",
+  "EligibleTeachers": "ReportAPI",
+  "TrainerAudit": "ReportAPI",
+  "Settings": "UserAPI"
+};
+export function apiRoute(path: string) {
+  const controller = path.split("/")[0];
+  const service = serviceRoutes[controller];
+  if (!service) throw new Error(`No service route is configured for ${controller}.`);
+  return `${service}/${path}`;
+}
 const tokenKey = 'teacher-training-api-token';
 export const accessToken = () => sessionStorage.getItem(tokenKey);
 export const setAccessToken = (token: string | null) => token ? sessionStorage.setItem(tokenKey, token) : sessionStorage.removeItem(tokenKey);
@@ -30,7 +76,7 @@ async function decryptEnvelope(envelope: Envelope): Promise<Envelope> {
 export async function apiPost<T>(path: string, body: unknown = {}): Promise<T> {
   const encrypted = await encryptPayload(body);
   const token = accessToken();
-  const response = await fetch(`${apiBase}/api/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(encrypted), signal: AbortSignal.timeout(30000) });
+  const response = await fetch(`${apiBase}/api/${apiRoute(path)}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(encrypted), signal: AbortSignal.timeout(30000) });
   let message = await response.json() as Envelope;
   if (message.encryptedData) message = await decryptEnvelope(message);
   if (!response.ok || message.isSuccess === false) {

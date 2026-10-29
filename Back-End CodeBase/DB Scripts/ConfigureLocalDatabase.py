@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 PSQL = Path(os.environ.get("POSTGRES_BIN", r"C:\Program Files\PostgreSQL\18\bin")) / "psql.exe"
 API_CONFIG = ROOT / "Microservices/TeachersAPI/appsettings.Local.json"
 GATEWAY_CONFIG = ROOT / "OcelotGateWay/appsettings.Local.json"
+SERVICE_CONFIGS = tuple(ROOT / 'Microservices' / name / 'appsettings.Local.json'
+                        for name in ('UserAPI', 'BatchAPI', 'ReportAPI'))
 
 
 def run_psql(arguments, password, input_text=None, username="postgres"):
@@ -34,7 +36,7 @@ def main():
         raise SystemExit("Set AD_POSTGRES_ADMIN_PASSWORD for this process before running setup.")
     if not PSQL.is_file():
         raise SystemExit("psql.exe not found. Set POSTGRES_BIN to the PostgreSQL bin directory.")
-    if API_CONFIG.exists() or GATEWAY_CONFIG.exists():
+    if any(path.exists() for path in (API_CONFIG, GATEWAY_CONFIG, *SERVICE_CONFIGS)):
         raise SystemExit("Local configuration already exists. Setup will not overwrite existing secrets.")
 
     application_password = secrets.token_urlsafe(36)
@@ -67,7 +69,7 @@ def main():
         "Cors": {"AllowedOrigins": ["http://localhost:5173", "http://127.0.0.1:5173",
                                     "http://localhost:3000", "http://localhost:4200"]}
     }
-    for path in (API_CONFIG, GATEWAY_CONFIG):
+    for path in (API_CONFIG, GATEWAY_CONFIG, *SERVICE_CONFIGS):
         # Exclusive creation prevents replacing an existing configuration.
         with path.open("x", encoding="utf-8") as output:
             json.dump(config, output, indent=2)
